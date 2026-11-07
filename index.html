@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8">
-<title>Happy Birthday Papa Ji!</title>
+<title>Happy Birthday Papa!</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -31,6 +31,7 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
 @keyframes up{to{transform:translateY(-125vh) rotate(8deg)}}
 .card{background:rgba(255,255,255,.14);backdrop-filter:blur(6px);border-radius:18px;padding:18px;margin-top:22px;line-height:1.7}
 
+/* gift */
 .giftwrap{margin:34px auto 0;text-align:center}
 .gift{position:relative;width:130px;height:130px;margin:0 auto;cursor:pointer;animation:shake 1.6s infinite}
 .gift.open{animation:none}
@@ -43,13 +44,16 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
 @keyframes shake{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-6deg)}85%{transform:rotate(6deg)}}
 .reveal{max-height:0;overflow:hidden;opacity:0;transition:all 1s}
 .reveal.show{max-height:1400px;opacity:1;margin-top:20px}
-.reveal img{width:100%;max-width:340px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+
+/* shayari card (pic ki jagah) */
+.shayari{max-width:340px;margin:0 auto;background:#1d1d1f;border-radius:16px;padding:44px 20px 28px;font-size:1.4rem;line-height:1.9;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.shayari small{display:block;margin-top:34px;font-size:.8rem;opacity:.55}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div class="wrap">
-  <h1 id="title">🎂 Happy Birthday Papa ji! 🎂</h1>
+  <h1 id="title">🎂 Happy Birthday Papa! 🎂</h1>
   <div class="sub" id="typed"></div>
 
   <div class="cake">
@@ -60,13 +64,19 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
   <button id="play">🎵 Music Chalu Karo</button>
   <button id="blow">🕯️ Candle Bujhao</button>
   <button id="boom">🎉 Confetti!</button>
-  
+  <div style="margin-top:10px"><input id="nm" placeholder="Papa ka naam likho"></div>
 
   <div class="giftwrap">
     <div class="gift" id="gift"><div class="glid"></div><div class="gbox"></div></div>
     <div style="margin-top:8px;font-weight:700" id="gtxt">🎁 Papa ke liye gift! Khol ke dekho 👆</div>
     <div class="reveal" id="reveal">
-      <img alt="Papa ke liye shayari" src="papa.jpg">
+      <div class="shayari">
+        धनतेरस का असली धन तो<br>
+        मेरे पापा हैं<br>
+        जिन्होंने कभी धन की कमी<br>
+        महसूस ही नहीं होने दी
+        <small>गुलज़ार की शायरी</small>
+      </div>
       <div class="card" style="margin-top:16px">Papa, aap hi meri asli daulat ho. Happy Birthday! 🎁❤️</div>
     </div>
   </div>
@@ -79,7 +89,7 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
 </div>
 
 <script>
-const msg="Aaj ka din sabse special hai, kyunki aaj mere pyare papa ji ka birthday hai! ❤️";
+const msg="Aaj ka din sabse special hai, kyunki aaj mere hero ka birthday hai! ❤️";
 let i=0;(function t(){if(i<=msg.length){document.getElementById('typed').textContent=msg.slice(0,i++);setTimeout(t,55)}})();
 
 // balloons
@@ -99,11 +109,11 @@ function boom(){for(let k=0;k<140;k++)P.push({x:Math.random()*cv.width,y:-10,vx:
 document.getElementById('boom').onclick=boom;
 boom();
 
-// name
+// papa ka naam
 document.getElementById('nm').oninput=e=>{const n=e.target.value.trim()||'Papa';
  document.getElementById('title').textContent='🎂 Happy Birthday '+n+'! 🎂'};
 
-// blow candle
+// candle
 document.getElementById('blow').onclick=()=>{document.getElementById('flame').classList.toggle('off');boom()};
 
 // gift
@@ -112,7 +122,7 @@ document.getElementById('gift').onclick=function(){
  document.getElementById('gtxt').textContent='🎉 Surprise! 🎉';boom();boom();
  setTimeout(()=>document.getElementById('reveal').scrollIntoView({behavior:'smooth',block:'center'}),400)};
 
-// music (Web Audio, no external files)
+// music (Web Audio, koi external file nahi)
 let ac,playing=false,timer;
 const N={G4:392,A4:440,B4:494,C5:523,D5:587,E5:659,F5:698,G5:784};
 const song=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
