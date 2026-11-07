@@ -16,6 +16,7 @@ h1{font-size:clamp(2rem,9vw,3.4rem);margin:8px 0;text-shadow:0 3px 12px rgba(0,0
 .sub{font-size:1.1rem;opacity:.95;min-height:3.2em;line-height:1.6}
 button{border:0;border-radius:30px;padding:14px 26px;font-size:1.05rem;font-weight:700;color:#fff;background:linear-gradient(90deg,#ff5f6d,#ffc371);cursor:pointer;margin:8px 4px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 button:active{transform:scale(.96)}
+input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:center;width:200px}
 .cake{position:relative;width:200px;margin:30px auto 10px;height:170px}
 .layer{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px}
 .l1{bottom:0;width:200px;height:60px;background:#f48fb1}
@@ -60,6 +61,7 @@ button:active{transform:scale(.96)}
   <button id="play">🎵 Music Chalu Karo</button>
   <button id="blow">🕯️ Candle Bujhao</button>
   <button id="boom">🎉 Confetti!</button>
+  <div style="margin-top:10px"><input id="nm" placeholder="Papa ka naam likho"></div>
 
   <div class="giftwrap">
     <div class="gift" id="gift"><div class="glid"></div><div class="gbox"></div></div>
@@ -77,14 +79,14 @@ button:active{transform:scale(.96)}
   </div>
 
   <div class="card">
-    Papa, aap meri taakat ho, meri inspiration ho. Aapki mehnat aur support ki wajah se hi main aaj yahan tak pahunch paya hoon. 💛<br>
+    Papa, aap meri taakat ho, meri inspiration ho. Aapki mehnat aur support ki wajah se hi main aaj yahan tak pahunchi/pahuncha hoon. 💛<br>
     Bhagwan aapko hamesha khush, swasth aur muskuraata rakhe.<br>
     <b>Janamdin ki bahut bahut badhai! 🥳</b>
   </div>
 </div>
 
 <script>
-const msg="Aaj ka din sabse special hai, kyunki aaj mere pyare papa ji ka birthday hai! ❤️";
+const msg="Aaj ka din sabse special hai, kyunki aaj mere hero ka birthday hai! ❤️";
 let i=0;(function t(){if(i<=msg.length){document.getElementById('typed').textContent=msg.slice(0,i++);setTimeout(t,55)}})();
 
 // balloons
@@ -103,6 +105,10 @@ function boom(){for(let k=0;k<140;k++)P.push({x:Math.random()*cv.width,y:-10,vx:
  P=P.filter(p=>p.y<cv.height+20);requestAnimationFrame(draw)})();
 document.getElementById('boom').onclick=boom;
 boom();
+
+// papa ka naam
+document.getElementById('nm').oninput=e=>{const n=e.target.value.trim()||'Papa';
+ document.getElementById('title').textContent='🎂 Happy Birthday '+n+'! 🎂'};
 
 // candle
 document.getElementById('blow').onclick=()=>{document.getElementById('flame').classList.toggle('off');boom()};
