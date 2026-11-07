@@ -30,12 +30,27 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
 .balloon:after{content:"";position:absolute;left:50%;top:100%;width:2px;height:40px;background:rgba(255,255,255,.6)}
 @keyframes up{to{transform:translateY(-125vh) rotate(8deg)}}
 .card{background:rgba(255,255,255,.14);backdrop-filter:blur(6px);border-radius:18px;padding:18px;margin-top:22px;line-height:1.7}
+
+.giftwrap{margin:34px auto 0;text-align:center}
+.gift{position:relative;width:130px;height:130px;margin:0 auto;cursor:pointer;animation:shake 1.6s infinite}
+.gift.open{animation:none}
+.gbox{position:absolute;bottom:0;left:10px;width:110px;height:80px;background:#e53935;border-radius:6px}
+.gbox:before{content:"";position:absolute;left:50%;margin-left:-9px;top:0;width:18px;height:100%;background:#ffd54f}
+.glid{position:absolute;bottom:80px;left:2px;width:126px;height:26px;background:#c62828;border-radius:6px;transition:transform .7s;transform-origin:left bottom}
+.glid:before{content:"";position:absolute;left:50%;margin-left:-9px;top:0;width:18px;height:100%;background:#ffd54f}
+.glid:after{content:"🎀";position:absolute;left:50%;top:-26px;transform:translateX(-50%);font-size:30px}
+.gift.open .glid{transform:translate(30px,-60px) rotate(25deg)}
+@keyframes shake{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-6deg)}85%{transform:rotate(6deg)}}
+.reveal{max-height:0;overflow:hidden;opacity:0;transition:all 1s}
+.reveal.show{max-height:1400px;opacity:1;margin-top:20px}
+.shayari{max-width:340px;margin:0 auto;background:#1d1d1f;border-radius:16px;padding:44px 20px 28px;font-size:1.4rem;line-height:1.9;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.shayari small{display:block;margin-top:34px;font-size:.8rem;opacity:.55}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div class="wrap">
-  <h1 id="title">🎂 Happy Birthday Papa ji! 🎂</h1>
+  <h1 id="title">🎂 Happy Birthday Papa! 🎂</h1>
   <div class="sub" id="typed"></div>
 
   <div class="cake">
@@ -46,7 +61,22 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
   <button id="play">🎵 Music Chalu Karo</button>
   <button id="blow">🕯️ Candle Bujhao</button>
   <button id="boom">🎉 Confetti!</button>
-  
+  <div style="margin-top:10px"><input id="nm" placeholder="Papa ka naam likho"></div>
+
+  <div class="giftwrap">
+    <div class="gift" id="gift"><div class="glid"></div><div class="gbox"></div></div>
+    <div style="margin-top:8px;font-weight:700" id="gtxt">🎁 Papa ke liye gift! Khol ke dekho 👆</div>
+    <div class="reveal" id="reveal">
+      <div class="shayari">
+        धनतेरस का असली धन तो<br>
+        मेरे पापा हैं<br>
+        जिन्होंने कभी धन की कमी<br>
+        महसूस ही नहीं होने दी
+        <small>गुलज़ार की शायरी</small>
+      </div>
+      <div class="card" style="margin-top:16px">Papa, aap hi meri asli daulat ho. Happy Birthday! 🎁❤️</div>
+    </div>
+  </div>
 
   <div class="card">
     Papa, aap meri taakat ho, meri inspiration ho. Aapki mehnat aur support ki wajah se hi main aaj yahan tak pahunchi/pahuncha hoon. 💛<br>
@@ -56,7 +86,7 @@ input{padding:10px 16px;border-radius:20px;border:0;font-size:1rem;text-align:ce
 </div>
 
 <script>
-const msg="Aaj ka din sabse special hai, kyunki aaj mere pyare papa ji ka birthday hai! ❤️";
+const msg="Aaj ka din sabse special hai, kyunki aaj mere hero ka birthday hai! ❤️";
 let i=0;(function t(){if(i<=msg.length){document.getElementById('typed').textContent=msg.slice(0,i++);setTimeout(t,55)}})();
 
 // balloons
@@ -76,30 +106,52 @@ function boom(){for(let k=0;k<140;k++)P.push({x:Math.random()*cv.width,y:-10,vx:
 document.getElementById('boom').onclick=boom;
 boom();
 
-// name
+// papa ka naam
 document.getElementById('nm').oninput=e=>{const n=e.target.value.trim()||'Papa';
  document.getElementById('title').textContent='🎂 Happy Birthday '+n+'! 🎂'};
 
-// blow candle
+// candle
 document.getElementById('blow').onclick=()=>{document.getElementById('flame').classList.toggle('off');boom()};
 
-// music (Web Audio, no external files)
-let ac,playing=false,timer;
+// gift
+document.getElementById('gift').onclick=function(){
+ this.classList.add('open');document.getElementById('reveal').classList.add('show');
+ document.getElementById('gtxt').textContent='🎉 Surprise! 🎉';boom();boom();
+ setTimeout(()=>document.getElementById('reveal').scrollIntoView({behavior:'smooth',block:'center'}),400)};
+
+// music: phone-friendly (Web Audio + iOS silent-switch unlock)
+let ac,master,playing=false,timer;
+const SILENT='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 const N={G4:392,A4:440,B4:494,C5:523,D5:587,E5:659,F5:698,G5:784};
 const song=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
 ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
 ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1],
 ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2]];
-function tone(f,t,d){const o=ac.createOscillator(),g=ac.createGain();
- o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(ac.destination);
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.3,t+.02);
- g.gain.exponentialRampToValueAtTime(.001,t+d);o.start(t);o.stop(t+d+.05)}
-function run(){const beat=.5;let t=ac.currentTime+.1;
- song.forEach(([n,b])=>{tone(N[n],t,b*beat*.95);tone(N[n]/2,t,b*beat*.9);t+=b*beat});
+function tone(f,t,d){
+ [[f,'triangle',.5],[f*2,'sine',.25]].forEach(([fr,type,vol])=>{
+  const o=ac.createOscillator(),g=ac.createGain();
+  o.type=type;o.frequency.value=fr;o.connect(g);g.connect(master);
+  g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+.03);
+  g.gain.exponentialRampToValueAtTime(.001,t+d);o.start(t);o.stop(t+d+.05)})}
+function run(){
+ if(!playing||!ac)return;
+ const beat=.5;let t=ac.currentTime+.15;
+ song.forEach(([n,b])=>{tone(N[n],t,b*beat*.95);t+=b*beat});
  timer=setTimeout(()=>{if(playing){boom();run()}},(t-ac.currentTime+.8)*1000)}
+function startMusic(){
+ // sab kuch click ke andar hi (phone ki rule)
+ ac=new (window.AudioContext||window.webkitAudioContext)();
+ master=ac.createGain();master.gain.value=1;
+ const comp=ac.createDynamicsCompressor();master.connect(comp);comp.connect(ac.destination);
+ try{const s=new Audio(SILENT);s.play().catch(()=>{})}catch(e){}
+ try{ac.resume()}catch(e){}
+ run()}
+function stopMusic(){
+ playing=false;clearTimeout(timer);
+ if(ac){try{ac.close()}catch(e){}ac=null}}
 document.getElementById('play').onclick=function(){
- if(!playing){ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();playing=true;this.textContent='⏸️ Music Roko';boom();run()}
- else{playing=false;clearTimeout(timer);ac.suspend().then(()=>ac.close());ac=null;this.textContent='🎵 Music Chalu Karo'}};
+ if(!playing){playing=true;this.textContent='⏸️ Music Roko';boom();startMusic()}
+ else{stopMusic();this.textContent='🎵 Music Chalu Karo'}};
 </script>
 </body>
 </html>
